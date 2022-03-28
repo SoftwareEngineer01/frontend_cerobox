@@ -113,8 +113,8 @@
 
                 <!-- Boton Editar  -->
                 <b-dropdown-item
-                  v-b-modal.modal-customer-edit
-                  @click="customerDetail(props.row)"
+                  v-b-modal.modal-service-edit
+                  @click="serviceDetail(props.row)"
                 >
                   <feather-icon
                     icon="Edit2Icon"
@@ -190,11 +190,11 @@
     />
 
     <!-- Modal para Editar Cliente  -->
-    <!-- <CustomerEdit
-      ref="cutomerEditModal"
-      :customerDetails="this.customerDetails"
-      @reload="getCustomers"
-      />  -->
+    <ServiceEdit
+      ref="serviceEditModal"
+      :serviceDetails="this.serviceDetails"
+      @reload="getServices"
+      /> 
     
     <!-- Modal Detalles -->
     <div v-if="detailStatus">
@@ -239,12 +239,12 @@ import * as services from '@/services/service'
 
 // Components
 import ServiceAdd from '@/views/services/ServiceAdd.vue'
-import CustomerEdit from '@/views/customers/CustomerEdit.vue'
+import ServiceEdit from '@/views/services/ServiceEdit.vue'
 
 export default {
   components: {
     ServiceAdd,
-    CustomerEdit
+    ServiceEdit
   },
   data() {
     return {

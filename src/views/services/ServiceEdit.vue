@@ -3,17 +3,17 @@
   <div>
     <!-- Modal para Agregar Servicios -->
     <validation-observer 
-      ref="addModal"
+      ref="editModal"
       #default="{invalid}">
       <b-modal
-        id="modal-service-add"
-        ref="serviceAddModal"
+        id="modal-service-edit"
+        ref="serviceEditModal"
         hide-footer
-        title="Agregar Servicio"
+        title="Editar Servicio"
         scrollable
         @hidden="hideServiceModal">
         <div class="d-block">        
-            <form @submit.prevent="addService">
+            <form @submit.prevent="updateService">
               
               <!-- Clientes --> 
               <div class="form-row">                   
@@ -23,7 +23,7 @@
                     #default="{ errors }"
                     rules="required">
                     <v-select
-                      v-model="service.customer_id"
+                      v-model="serviceDetails.customer_id"
                       label="name"
                       :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
                       :options="customers"
@@ -47,7 +47,7 @@
                     #default="{ errors }"
                     rules="required">
                     <v-select
-                      v-model="service.id_type_service"
+                      v-model="serviceDetails.id_type_service"
                       label="name"
                       :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
                       :options="type_services"
@@ -74,7 +74,7 @@
                     >
                       <b-form-input
                         id="start_date"
-                        v-model="service.start_date"
+                        v-model="serviceDetails.start_date"
                         type="date"
                         class="form-control"
                         :state="errors.length > 0 ? false:null"
@@ -93,7 +93,7 @@
                     >
                       <b-form-input
                         id="end_date"
-                        v-model="service.end_date"
+                        v-model="serviceDetails.end_date"
                         type="date"
                         class="form-control"
                         :state="errors.length > 0 ? false:null"
@@ -114,7 +114,7 @@
                   >
                     <b-form-textarea
                       id="name"
-                      v-model="service.name"
+                      v-model="serviceDetails.name"
                       type="text"
                       class="form-control"
                       placeholder="Descripción del Servicio"
@@ -136,7 +136,7 @@
                   >
                   <b-form-textarea
                     id="observacion"
-                    v-model="service.observations"
+                    v-model="serviceDetails.observations"
                     placeholder="Escriba la Observación..."
                     rows="3"
                     max-rows="6"
@@ -162,7 +162,7 @@
                   class="btn btn-primary btn-sm"
                   :disabled="invalid"
                 >
-                  <span class="fa fa-check" /> Guardar
+                  <span class="fa fa-check" /> Actualizar
                 </button>
               </div>
             </form>        
@@ -186,7 +186,14 @@ import vSelect from 'vue-select'
 
 export default {
 
-  name: 'CustomerAdd',
+  name: 'ServiceEdit',
+
+  props: {
+    serviceDetails: {
+      type: Object,
+      default: () => {},
+    },
+  },
 
   components: {
     ToastificationContent,
@@ -223,18 +230,18 @@ export default {
 
   methods: {
 
-    async addService() {
+    async updateService() {
 
       try {
-        const response = await service.addService(this.service)
+        const response = await service.updateService(this.serviceDetails)
 
-        if (response.status === 201) {
+        if (response.status === 200) {
           this.hideServiceModal()
           this.$emit('reload')
-          this.showToast('Agregado', 'CheckIcon', 'Servicio Agregado', 'success')
+          this.showToast('Actualizado', 'CheckIcon', 'Servicio Actualizado', 'success')
         }
       } catch (error) {          
-          this.showToast('Advertencia!', 'AlertCircleIcon', 'Ocurrió un error al agregar el Servicio', 'warning')
+          this.showToast('Advertencia!', 'AlertCircleIcon', 'Ocurrió un error al actualizar el Servicio', 'warning')
         }
     },
 
@@ -251,20 +258,9 @@ export default {
     },
 
     hideServiceModal() {
-      this.$refs.addModal.reset()
-      this.$refs.serviceAddModal.hide()
-      this.cleanForm()
-    },
-
-    cleanForm() {
-      this.service = {
-        name: '',
-        customer_id: '',
-        id_type_service: '',
-        start_date: '',
-        end_date: '',
-        observations: '',
-      }
+      this.$refs.editModal.reset()
+      this.$refs.serviceEditModal.hide()
+      this.$emit('reload')
     },
 
     showToast(title, icon, text, variant) {

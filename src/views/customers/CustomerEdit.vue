@@ -198,6 +198,7 @@ export default {
     hideCustomerModal() {
       this.$refs.editModal.reset()
       this.$refs.cutomerEditModal.hide()
+      this.$emit('reload')
     },
 
     showToast(title, icon, text, variant) {
