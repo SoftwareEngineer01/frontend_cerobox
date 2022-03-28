@@ -41,7 +41,7 @@
             class="mb-1 font-weight-bold"
             title-tag="h2"
           >
-            Welcome to Vuexy! 👋
+            Bienvenido! 👋
           </b-card-title>
           <b-card-text class="mb-2">
             Please sign-in to your account and start the adventure
@@ -216,13 +216,14 @@ import VuexyLogo from '@core/layouts/components/Logo.vue'
 import {
   BRow, BCol, BLink, BFormGroup, BFormInput, BInputGroupAppend, BInputGroup, BFormCheckbox, BCardText, BCardTitle, BImg, BForm, BButton, BAlert, VBTooltip,
 } from 'bootstrap-vue'
-import useJwt from '@/auth/jwt/useJwt'
 import { required, email } from '@validations'
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import axios from 'axios'
 import store from '@/store/index'
 import { getHomeRouteForLoggedInUser } from '@/auth/utils'
 
-import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+// import useJwt from '@/auth/jwt/useJwt'
 
 export default {
   directives: {
@@ -251,8 +252,8 @@ export default {
   data() {
     return {
       status: '',
-      password: 'admin',
-      userEmail: 'admin@demo.com',
+      password: '',
+      userEmail: '',
       sideImg: require('@/assets/images/pages/login-v2.svg'),
 
       // validation rules
@@ -274,41 +275,60 @@ export default {
     },
   },
   methods: {
+
     login() {
       this.$refs.loginForm.validate().then(success => {
         if (success) {
-          useJwt.login({
-            email: this.userEmail,
-            password: this.password,
-          })
-            .then(response => {
-              const { userData } = response.data
-              useJwt.setToken(response.data.accessToken)
-              useJwt.setRefreshToken(response.data.refreshToken)
-              localStorage.setItem('userData', JSON.stringify(userData))
-              this.$ability.update(userData.ability)
+          axios.get('http://localhost:8000/sanctum/csrf-cookie')
+            .then(() => {
+              axios.post('http://localhost:8000/api/auth/login', {
+                email: this.userEmail,
+                password: this.password,
+              }).then(resp => {
+                const login = resp.data
+                const tokenOriginal = login.accessToken
+                const token = tokenOriginal.replace(/["']/g, '')
 
-              // ? This is just for demo purpose as well.
-              // ? Because we are showing eCommerce app's cart items count in navbar
-              this.$store.commit('app-ecommerce/UPDATE_CART_ITEMS_COUNT', userData.extras.eCommerceCartItemsCount)
+                localStorage.setItem('accessToken', JSON.stringify(token))
+                localStorage.setItem('refreshToken', JSON.stringify(token))
 
-              // ? This is just for demo purpose. Don't think CASL is role based in this case, we used role in if condition just for ease
-              this.$router.replace(getHomeRouteForLoggedInUser(userData.role))
-                .then(() => {
-                  this.$toast({
-                    component: ToastificationContent,
-                    position: 'top-right',
-                    props: {
-                      title: `Welcome ${userData.fullName || userData.username}`,
-                      icon: 'CoffeeIcon',
-                      variant: 'success',
-                      text: `You have successfully logged in as ${userData.role}. Now you can start to explore!`,
-                    },
+                axios.defaults.headers.common.Authorization = `Bearer ${token}`
+                axios.defaults.headers.common.Accept = 'application/json'
+                axios.defaults.withCredentials = true
+
+                axios.get('http://localhost:8000/api/user')
+
+                  .then(response => {
+                    const user = response.data.data
+                    const { role } = user
+
+                    localStorage.setItem('userData', JSON.stringify(user))
+
+                    this.$ability.update(user.ability)
+
+                    // ? This is just for demo purpose as well.
+                    // ? Because we are showing eCommerce app's cart items count in navbar
+                    // this.$store.commit('app-ecommerce/UPDATE_CART_ITEMS_COUNT', userData.extras.eCommerceCartItemsCount)
+
+                    // ? This is just for demo purpose. Don't think CASL is role based in this case, we used role in if condition just for ease
+                    this.$router.replace(getHomeRouteForLoggedInUser(role))
+                      .then(() => {
+                        this.$toast({
+                          component: ToastificationContent,
+                          position: 'top-right',
+                          props: {
+                            title: `Bienvenido ${user.name}`,
+                            icon: 'CoffeeIcon',
+                            variant: 'success',
+                            text: `Ha iniciado sesión correctamente como ${user.role}.!`,
+                          },
+                        })
+                      })
                   })
+              })
+                .catch(error => {
+                  this.$refs.loginForm.setErrors(error.response.data.error)
                 })
-            })
-            .catch(error => {
-              this.$refs.loginForm.setErrors(error.response.data.error)
             })
         }
       })

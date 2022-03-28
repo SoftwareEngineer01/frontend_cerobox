@@ -8,7 +8,7 @@ export function http() {
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-    //   'Authorization': `Bearer ${localStorage.getItem('accessToken').replace(/['"]+/g, '')}`
+      'Authorization': `Bearer ${localStorage.getItem('accessToken').replace(/['"]+/g, '')}`
     }
   })
 }
