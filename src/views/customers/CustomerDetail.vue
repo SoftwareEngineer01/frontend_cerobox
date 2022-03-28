@@ -95,7 +95,7 @@
 
         <!--  Detalles  -->
         <template #cell(show_details)="row">
-            <b-button size="sm" @click="row.toggleDetails" class="mr-2">
+            <b-button variant="primary" size="sm" @click="row.toggleDetails" class="mr-1">
             {{ row.detailsShowing ? 'Ocultar' : 'Mostrar'}} Detalles
             </b-button>
         </template>
@@ -106,7 +106,7 @@
                 <b-col sm="3" class="text-sm-right"><b>Observaciones:</b></b-col>
                 <b-col>{{ row.item.observations }}</b-col>
             </b-row>
-            <b-button size="sm" @click="row.toggleDetails">Ocultar Detalles</b-button>
+            <b-button variant="primary" size="sm" @click="row.toggleDetails">Ocultar Detalles</b-button>
             </b-card>
         </template>
 
