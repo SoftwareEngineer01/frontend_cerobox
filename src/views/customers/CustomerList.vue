@@ -16,7 +16,7 @@
         >
           <div class="center-mobile">
             <b-button
-              v-b-modal.modal-1
+              v-b-modal.modal-customer-add
               variant="primary"
               @click="showModal = true"
             >
@@ -171,14 +171,18 @@
     <CustomerDetail
       ref="customerDetail"
       :customerDetails="this.customerDetails"
+    />
+
+    <!-- Modal Para Agregar Cliente -->
+    <CustomerAdd
+      ref="cutomerAddModal"
       @reload="getCustomers"
     />
 
-    <!-- Modal Para Editar Centro de Costo -->
     <!-- <CostCenterEdit
-      ref="editModal"
+      ref="addModal"
       :edit-cost-center="this.dataCostCenter"
-      @reload="getCostCenters"
+      @reload="getCustomers"
     /> -->
 
   </div>
@@ -196,12 +200,12 @@ import * as customerService from '@/services/customers'
 
 // Components
 import CustomerDetail from '@/views/customers/CustomerDetail.vue'
-// import CostCenterEdit from '@/views/admin/cost_center/cost_center-edit/CostCenterEdit.vue'
+import CustomerAdd from '@/views/customers/CustomerAdd.vue'
 
 export default {
   components: {
-    CustomerDetail
-    // CostCenterEdit,
+    CustomerDetail,
+    CustomerAdd,
   },
   data() {
     return {

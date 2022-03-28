@@ -4,6 +4,7 @@
     <b-modal
       size="xl"
       id="customerDetail"
+      ref="customerDetail"
       hide-footer
       scrollable
     >
