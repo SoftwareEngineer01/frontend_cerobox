@@ -279,9 +279,9 @@ export default {
     login() {
       this.$refs.loginForm.validate().then(success => {
         if (success) {
-          axios.get('http://localhost:8000/sanctum/csrf-cookie')
+          axios.get('https://backend-cerobox.herokuapp.com/sanctum/csrf-cookie')
             .then(() => {
-              axios.post('http://localhost:8000/api/auth/login', {
+              axios.post('https://backend-cerobox.herokuapp.com/api/auth/login', {
                 email: this.userEmail,
                 password: this.password,
               }).then(resp => {
@@ -296,7 +296,7 @@ export default {
                 axios.defaults.headers.common.Accept = 'application/json'
                 axios.defaults.withCredentials = true
 
-                axios.get('http://localhost:8000/api/user')
+                axios.get('https://backend-cerobox.herokuapp.com/api/user')
 
                   .then(response => {
                     const user = response.data.data

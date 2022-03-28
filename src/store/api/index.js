@@ -1,6 +1,6 @@
 export default {
     state: {
-      apiURL: 'http://localhost:8000/api',
+      apiURL: 'https://backend-cerobox.herokuapp.com/api',
       serverPath: 'http://localhost:8000',
     },
     mutations: {},
