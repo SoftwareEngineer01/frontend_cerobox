@@ -67,8 +67,19 @@
           slot-scope="props"
         >
 
+          <!-- Columna: Nombre -->
+          <span v-if="props.column.field === 'name'">
+            <b-button
+              variant="link"
+              v-b-modal.customerDetail
+              @click="customerDetail(props.row)"
+            >
+              {{ props.row.name }}
+            </b-button>
+          </span>
+
           <!-- Columna: Opciones -->
-          <span v-if="props.column.field === 'action'">
+          <span v-else-if="props.column.field === 'action'">
             <span>
               <b-dropdown
                 variant="link"
@@ -89,7 +100,7 @@
                   @click="customerDetail(props.row)"
                 >
                   <feather-icon
-                    icon="Edit2Icon"
+                    icon="EyeIcon"
                     class="mr-50"
                   />
                   <span>Detalles</span>
@@ -97,8 +108,8 @@
 
                 <!-- Boton Editar  -->
                 <b-dropdown-item
-                  v-b-modal.editCostCenter
-                  @click="editCostCenter(props.row)"
+                  v-b-modal.modal-customer-edit
+                  @click="customerDetail(props.row)"
                 >
                   <feather-icon
                     icon="Edit2Icon"
@@ -179,11 +190,12 @@
       @reload="getCustomers"
     />
 
-    <!-- <CostCenterEdit
-      ref="addModal"
-      :edit-cost-center="this.dataCostCenter"
+    <!-- Modal para Editar Cliente  -->
+    <CustomerEdit
+      ref="cutomerEditModal"
+      :customerDetails="this.customerDetails"
       @reload="getCustomers"
-    /> -->
+      /> 
 
   </div>
 </template>
@@ -201,11 +213,13 @@ import * as customerService from '@/services/customers'
 // Components
 import CustomerDetail from '@/views/customers/CustomerDetail.vue'
 import CustomerAdd from '@/views/customers/CustomerAdd.vue'
+import CustomerEdit from '@/views/customers/CustomerEdit.vue'
 
 export default {
   components: {
     CustomerDetail,
     CustomerAdd,
+    CustomerEdit
   },
   data() {
     return {

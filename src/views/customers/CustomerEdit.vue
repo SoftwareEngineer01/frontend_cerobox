@@ -1,19 +1,19 @@
 <template>
   <!--  eslint-disable -->
   <div>
-    <!-- Modal para Agregar Clientes -->
+    <!-- Modal para Editar Cliente -->
     <validation-observer 
-      ref="addModal"
+      ref="editModal"
       #default="{invalid}">
       <b-modal
-        id="modal-customer-add"
-        ref="cutomerAddModal"
+        id="modal-customer-edit"
+        ref="cutomerEditModal"
         hide-footer
-        title="Agregar Cliente"
+        title="Editar Cliente"
         scrollable
         @hidden="hideCustomerModal">
         <div class="d-block">        
-            <form @submit.prevent="addCustomer">
+            <form @submit.prevent="updateCustomer">
               <div class="form-row">
                 <!-- Nombre -->
                 <div class="form-group col-md-6">
@@ -25,7 +25,7 @@
                   >
                     <b-form-input
                       id="name"
-                      v-model="customer.name"
+                      v-model="customerDetails.name"
                       type="text"
                       class="form-control"
                       placeholder="Nombre del Cliente"
@@ -45,7 +45,7 @@
                   >
                     <b-form-input
                       id="identification"
-                      v-model="customer.identification"
+                      v-model="customerDetails.identification"
                       type="text"
                       class="form-control"
                       placeholder="Identificación del Cliente"
@@ -70,7 +70,7 @@
                   >
                     <b-form-input
                       id="email"
-                      v-model="customer.email"
+                      v-model="customerDetails.email"
                       type="text"
                       class="form-control"
                       placeholder="Email del Cliente"
@@ -90,7 +90,7 @@
                   >
                     <b-form-input
                       id="phone_number"
-                      v-model="customer.phone_number"
+                      v-model="customerDetails.phone_number"
                       type="text"
                       class="form-control"
                       placeholder="Teléfono del Cliente"
@@ -113,7 +113,7 @@
                   >
                   <b-form-textarea
                     id="observacion"
-                    v-model="customer.observations"
+                    v-model="customerDetails.observations"
                     placeholder="Escriba la Observación..."
                     rows="3"
                     max-rows="6"
@@ -139,7 +139,7 @@
                   class="btn btn-primary btn-sm"
                   :disabled="invalid"
                 >
-                  <span class="fa fa-check" /> Guardar
+                  <span class="fa fa-check" /> Actualizar
                 </button>
               </div>
             </form>        
@@ -161,55 +161,43 @@ import * as customerService from '@/services/customers'
 
 export default {
 
-  name: 'CustomerAdd',
+  name: 'CustomerEdit',
+
+  props: {
+    customerDetails: {
+      type: Object,
+      default: () => {},
+    },
+  },
 
   components: {
     ToastificationContent,
   },
 
   data() {
-    return {
-      customer: {
-        name: '',
-        identification: '',
-        email: '',
-        phone_number: '',
-        observations: '',
-      },
-    }
+    return {}
   },
 
   methods: {
 
-    async addCustomer() {
+    async updateCustomer() {
 
       try {
-        const response = await customerService.addCustomer(this.customer)
+        const response = await customerService.updateCustomer(this.customerDetails)
 
-        if (response.status === 201) {
+        if (response.status === 200) {
           this.hideCustomerModal()
           this.$emit('reload')
-          this.showToast('Agregado', 'CheckIcon', 'Cliente Agregado', 'success')
+          this.showToast('Actualizado', 'CheckIcon', 'Cliente Actualizado', 'success')
         }
       } catch (error) {          
-          this.showToast('Advertencia!', 'AlertCircleIcon', 'Ocurrió un error al agregar el Cliente', 'warning')
+          this.showToast('Advertencia!', 'AlertCircleIcon', 'Ocurrió un error al editar el Cliente', 'warning')
         }
       },
 
     hideCustomerModal() {
-      this.$refs.addModal.reset()
-      this.$refs.cutomerAddModal.hide()
-      this.cleanForm()
-    },
-
-    cleanForm() {
-      this.customer = {
-        name: '',
-        identification: '',
-        email: '',
-        phone_number: '',
-        observations: '',
-      }
+      this.$refs.editModal.reset()
+      this.$refs.cutomerEditModal.hide()
     },
 
     showToast(title, icon, text, variant) {

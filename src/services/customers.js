@@ -7,3 +7,7 @@ export function getCustomers() {
 export function addCustomer(customer) {
   return http().post('/customers', customer)
 }
+
+export function updateCustomer(customer) {
+  return http().post(`/customers/${customer.id}`, customer)
+}
