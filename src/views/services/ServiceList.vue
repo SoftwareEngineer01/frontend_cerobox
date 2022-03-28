@@ -122,6 +122,19 @@
                   />
                   <span>Editar</span>
                 </b-dropdown-item>
+
+                <!-- Boton Eliminar -->
+                <b-dropdown-item
+                  v-b-modal.modal-service-delete
+                  @click="deleteService(props.row)"
+                >
+                  <feather-icon
+                    icon="Trash2Icon"
+                    class="mr-50"
+                  />
+                  <span>Eliminar</span>
+                </b-dropdown-item>
+
               </b-dropdown>
             </span>
           </span>                 
@@ -241,10 +254,14 @@ import * as services from '@/services/service'
 import ServiceAdd from '@/views/services/ServiceAdd.vue'
 import ServiceEdit from '@/views/services/ServiceEdit.vue'
 
+// Notificaciones
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+
 export default {
   components: {
     ServiceAdd,
-    ServiceEdit
+    ServiceEdit,
+    ToastificationContent
   },
   data() {
     return {
@@ -326,6 +343,43 @@ export default {
     serviceDetail(data) {
       this.detailStatus = true
       this.serviceDetails = data
+    },
+
+    async deleteService(data) {
+      
+      try {
+
+        const modal = await this.$bvModal.msgBoxConfirm('¿Está seguro de eliminar el registro?', {
+          okTitle: 'Si',
+          okVariant: 'danger',
+          cancelTitle: 'No',
+          cancelVariant: 'primary',
+        })
+
+        if (modal) {
+          const response = await services.deleteService(data.id)
+          
+          if (response.status === 200) {
+            this.showToast('Success', 'CheckCircleIcon', 'Registro eliminado correctamente', 'success')
+            this.getServices()
+          }          
+        }
+
+      } catch (error) {
+        this.showToast('Warning', 'AlertCircleIcon', 'El registro no se pudo eliminar', 'warning')
+      }
+    },
+
+    showToast(title, icon, text, variant) {
+      this.$toast({
+        component: ToastificationContent,
+        props: {
+          title,
+          icon,
+          text,
+          variant,
+        },
+      })
     },
     
   },
