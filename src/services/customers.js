@@ -11,3 +11,7 @@ export function addCustomer(customer) {
 export function updateCustomer(customer) {
   return http().post(`/customers/${customer.id}`, customer)
 }
+
+export function deleteCustomer(id) {
+  return http().post(`/customers/deleteCustomer/${id}`)
+}

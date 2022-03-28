@@ -1,10 +1,10 @@
 /* eslint-disable */
 export default [
     {
-      header: 'Clientes',
+      header: 'Menú',
     },
     {
-      title: 'Clientes',
+      title: 'Administración',
       icon: 'SettingsIcon',
       children: [
         {
@@ -12,21 +12,11 @@ export default [
           route: 'customer-list',
           icon: 'FileTextIcon',
         },
-        // {
-        //   title: 'Dependencias',
-        //   route: 'dependence-list',
-        //   icon: 'HomeIcon',
-        // },
-        // {
-        //   title: 'Perfiles',
-        //   route: 'profile-list',
-        //   icon: 'FileTextIcon',
-        // },
-        // {
-        //   title: 'Usuarios',
-        //   route: 'user-list',
-        //   icon: 'UserIcon',
-        // },
+        {
+          title: 'Servicios',
+          route: 'service-list',
+          icon: 'FileTextIcon',
+        },
       ],
     },  
 ]

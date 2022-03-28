@@ -117,6 +117,19 @@
                   />
                   <span>Editar</span>
                 </b-dropdown-item>
+
+                <!-- Boton Eliminar -->
+                <b-dropdown-item
+                  v-b-modal.modal-customer-delete
+                  @click="deleteCustomer(props.row)"
+                >
+                  <feather-icon
+                    icon="Trash2Icon"
+                    class="mr-50"
+                  />
+                  <span>Eliminar</span>
+                </b-dropdown-item>
+
               </b-dropdown>
             </span>
           </span>                 
@@ -215,11 +228,15 @@ import CustomerDetail from '@/views/customers/CustomerDetail.vue'
 import CustomerAdd from '@/views/customers/CustomerAdd.vue'
 import CustomerEdit from '@/views/customers/CustomerEdit.vue'
 
+// Notificaciones
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+
 export default {
   components: {
     CustomerDetail,
     CustomerAdd,
-    CustomerEdit
+    CustomerEdit,
+    ToastificationContent
   },
   data() {
     return {
@@ -292,6 +309,45 @@ export default {
     customerDetail(data) {
       this.customerDetails = data
     },
+
+    async deleteCustomer(data) {
+      
+      try {
+
+        const modal = await this.$bvModal.msgBoxConfirm('¿Está seguro de eliminar el registro?', {
+          okTitle: 'Si',
+          okVariant: 'danger',
+          cancelTitle: 'No',
+          cancelVariant: 'primary',
+        })
+
+        if (modal) {
+          const response = await customerService.deleteCustomer(data.id)
+          
+          if (response.status === 200) {
+            this.showToast('Success', 'CheckCircleIcon', 'Registro eliminado correctamente', 'success')
+            this.getCustomers()
+          }          
+        }
+
+      } catch (error) {
+        this.showToast('Warning', 'AlertCircleIcon', 'El registro no se pudo eliminar', 'warning')
+      }
+    },
+
+    showToast(title, icon, text, variant) {
+      this.$toast({
+        component: ToastificationContent,
+        props: {
+          title,
+          icon,
+          text,
+          variant,
+        },
+      })
+    },
+
+
     
   },
 

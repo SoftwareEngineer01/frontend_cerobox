@@ -9,7 +9,7 @@
       scrollable
     >
     <div class="px-2 animated fadeIn">
-        <h3>Detalle del Cliente</h3>
+        <h3>Detalles del Cliente</h3>
         <hr>
         <b-row>
             <!-- Nombre -->
